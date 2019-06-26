@@ -8,9 +8,9 @@
 /* Codigo de prueba para el sensor 1 de la tarjeta miniblack
 Materiales
 - Tarjeta Miniblack:		1
-- Programador AVR:			1
-- Bateria:					    1
-- Sensor JS40F:				  1
+- Programador AVR:		1
+- Bateria:			1
+- Sensor JS40F:			1
 */
 
 #include <avr/io.h>
@@ -24,7 +24,7 @@ void sensores();
 
 //********Declaracion de Pines*****************
 #define Led1	PB5		// Pin del Led1
-#define SH1		PC0		// Pin del sensor 1
+#define SH1	PC0		// Pin del sensor 1
 //*********************************************
 
 //********Declaracion de instrucciones de leds*********
