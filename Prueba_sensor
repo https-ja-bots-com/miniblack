@@ -1,0 +1,65 @@
+/*
+ * MiniBlack.c
+ *
+ * Created: 26/06/2019 12:10:33 p. m.
+ * Author : Jason
+ */ 
+
+/* Codigo de prueba para el sensor 1 de la tarjeta miniblack
+Materiales
+- Tarjeta Miniblack:		1
+- Programador AVR:			1
+- Bateria:					    1
+- Sensor JS40F:				  1
+*/
+
+#include <avr/io.h>
+
+//*******Declaracion de las funciones que se utilizan********
+void sensores();
+//***********************************************************
+
+
+//********Declaracion de Pines*****************
+#define Led1	PB5		// Pin del Led1
+#define SH1		PC0		// Pin del sensor 1
+//*********************************************
+
+//********Declaracion de instrucciones de leds*********
+#define Led1On		PORTB |= (1<<Led1)  //Instrucción para prender el Led 1
+#define Led1Off		PORTB &= ~(1<<Led1) //Instrucción para apagar el Led 1
+//*****************************************************
+
+
+//********Declaracion de instrucciones de Sensores*********
+#define Sen1     	PINC & (1<<SH1)     //Instrucción para leer el pin del sensor 1
+//*********************************************
+
+//********Declaracion de variables globales*********
+int s1=0;
+//*********************************************
+
+int main(void)
+{
+    DDRB |= (1<<Led1);  // declaracion del pin como salida (LED1)
+	DDRC &= ~(1<<SH1);	// declaracion del pin como entrada (Sensor1)
+   
+    while (1) 
+    {
+			sensores(); // Llamada a la funcion de sensores
+			if (s1==1)
+			{
+				Led1On;
+			} 
+			else
+			{
+				Led1Off;
+			}	
+    }
+}
+
+void sensores(){
+	if (Sen1){s1=1;} // Si el sensor detecta un objeto la variable s1 se pone en 1 de lo contrario se pone en 0
+	else	 {s1=0;}
+	//Aca puedes añadir mas sensores si lo deseas		
+}
