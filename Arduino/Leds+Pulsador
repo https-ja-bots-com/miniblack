@@ -1,0 +1,29 @@
+    //Codigo para prender un led de la tarjeta  Miniblack con un pulsador 
+
+//Declaracion de Pines
+const int led1 = 13;  
+const int sw1 = 8;  //pulsador 1
+
+// Define los estados HIGH,LOW de cada led 
+#define led1on digitalWrite(led1, HIGH);
+#define led1off digitalWrite(led1, LOW);
+
+
+//Declaracion Variables
+int pulsador=0;
+
+void setup() {
+    //configuracion de condiciones iniciales
+    pinMode(led1,OUTPUT);
+    pinMode(sw1,INPUT);
+}
+
+void loop() {
+
+    if(digitalRead(sw1)==HIGH){
+          led1on;
+    }
+    else{
+          led1off;
+    }
+}
