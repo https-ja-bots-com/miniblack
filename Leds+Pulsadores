@@ -1,0 +1,39 @@
+/*
+ * Miniblack-Prueba_leds+pulsadores.c
+ *
+ * Created: 17/04/2019 12:50:32 p. m.
+ * Author : JA-BOTS.COM
+ */ 
+ 
+ // Archivo de prueba de leds y pulsadores de la tarjeta Miniblack 3.0
+
+#include <avr/io.h>
+#define F_CPU 20000000UL //Declara un reloj de 20MHz
+#include <util/delay.h>
+#include <stdlib.h>
+
+#define SW1		PB0 // Pin del pulsador 1
+#define Led1	PB5   // Pin del led a utilizar
+
+#define push1     PINB & (1<<SW1)     // instruccion para leer el pin de entrada
+#define Led1On		PORTB |= (1<<Led1)  // Instruccion para poner en alto el Led 1
+#define Led1Off		PORTB &= ~(1<<Led1) // Instruccion para poner en bajo el Led 1
+
+int main(void){
+	//*******************//
+	DDRB |= (1<<Led1);    // Declaracion del pin del Led1 como salida.
+	//******************//
+	DDRB &= ~(1<<SW1);	  // Declaracion del pin del pulsador como entrada
+	//*****************//
+   
+   while (1) {
+		  //Codigo que enciende el led1 cuando se oprime el pulsador1 y se apaga cuando se suelta
+		  if (push1) {
+			  Led1On;
+			}
+		  else {
+			  Led1Off;  
+      }
+    }
+}
+
