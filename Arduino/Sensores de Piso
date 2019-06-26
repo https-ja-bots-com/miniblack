@@ -1,0 +1,73 @@
+//Declaracion de Pines
+const int led1 = 13; 
+const int led2 = 12; 
+const int led3 = 11;
+const int s1 = 14; // conexion sensor 1
+const int s2 = 15; // conexion sensor 2
+const int s3 = 16; // conexion sensor 3
+const int s4 = 17; // conexion sensor 4 
+const int s5 = 18; // conexion sensor 5 
+
+//Declaracion de variables a utilizar
+int adcd=0;
+int adci=0;
+int sensor1=0;
+int sensor2=0;
+int q1=0;
+int q2=0;
+
+// Define los estados HIGH,LOW de cada led 
+#define led1on digitalWrite(led1, HIGH);
+#define led2on digitalWrite(led2, HIGH);
+#define led3on digitalWrite(led3, HIGH);
+#define led1off digitalWrite(led1, LOW);
+#define led2off digitalWrite(led2, LOW);
+#define led3off digitalWrite(led3, LOW);
+
+void setup() {
+    //configuracion de condiciones iniciales
+    pinMode(led1,OUTPUT);
+    pinMode(led2,OUTPUT);
+    pinMode(led3,OUTPUT);
+    pinMode(s1,INPUT);
+    pinMode(s2,INPUT);
+    pinMode(s3,INPUT);
+    pinMode(s4,INPUT_PULLUP);
+    pinMode(s5,INPUT_PULLUP);
+}
+
+void loop() {
+    //Codigo para probar sensores de deteccion
+       adci = analogRead(6);
+       adcd = analogRead(7);
+       if (adci<=80){ 
+          led3on; 
+       }
+       else{
+          led3off; q1=0;
+       } 
+       if (adcd<=80){
+          led3on; q2=1;
+       }
+       else{ 
+          led3off; q2=0;
+       }
+       if (q1||q2){
+          led3on;
+       }
+  
+       sensor1 = !digitalRead(s4);
+       sensor2 = !digitalRead(s5);
+       if (sensor1==1){
+           led1on;
+       }
+       else{
+           led1off;
+       }  
+       if (sensor2==1){
+           led2on;
+       }
+       else{
+           led2off;
+       }
+}
