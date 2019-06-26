@@ -1,0 +1,86 @@
+/*
+ * Miniblack-Prueba_motores.c
+ *
+ * Created: 17/04/2019 2:53:58 p. m.
+ * Author : JA-BOTS.COM
+ */ 
+
+#include <avr/io.h>
+#define F_CPU 20000000UL  // Define un reloj de 20MHz
+#include <util/delay.h>
+#include <stdlib.h>
+
+#define Led1	PB5   // Declaracion del pin para el led 1
+#define Led2	PB4   // Declaracion del pin para el led 2
+#define Led1On		PORTB |= (1<<Led1)  // Instruccion para prender el Led 1
+#define Led2On		PORTB |= (1<<Led2)  // Instruccion para prender el Led 2
+#define Led1Off		PORTB &= ~(1<<Led1) // instruccion para apagar el Led 1
+#define Led2Off		PORTB &= ~(1<<Led2) // instruccion para apagar el Led 2
+
+# define IN1A PC5  // Declaracion de los pines que se conectan al driver
+# define IN2A PD4  //              ""
+# define IN1B PD3  //              ""
+# define IN2B PD2  //              ""
+# define PWM1 PD5  // Pin del PWM del motor 1
+# define PWM2 PD6  // Pin del PWM del motor 2
+
+#define SW1		PB0 // Pin del pulsador 1
+#define push1 PINB & (1<<SW1) // Instruccion para leer el pulsador 1
+
+// Variables que se desean utilizar
+
+void timer0_init(void){  // Funcion que inicializa el timer 0 para el PWM de los motores
+	TCCR0A = 0b10100011; // Configuracion de Registros
+	TCCR0B = 0b00000010; // Configuracion de Registros
+	TCNT0 = 0;           // Inicializa el contador
+	OCR0A = 0;           
+	OCR0B = 0;
+}
+
+int motors (int speedL, int speedR){ // Funcion para el uso de motores
+	int veld = speedR;
+	int veli = speedL;
+	
+	if (veld>0) { PORTC |= (1<<IN1A);	PORTD &= ~(1<<IN2A); }
+	else        {	PORTC &= ~(1<<IN1A);  PORTD |= (1<<IN2A); }
+	
+	if (veli>0) { PORTD |= (1<<IN1B);   PORTD &= ~(1<<IN2B); }
+	else        {	PORTD &= ~(1<<IN1B);	PORTD |= (1<<IN2B); }
+	OCR0B = abs(veld);
+	OCR0A = abs(veli);
+	return 0;
+}
+
+int main(void){
+   //Condiciones Iniciales 
+   //*******************//
+   DDRB |= (1<<Led1);   // declaracion de los pines como salida. led 1
+   DDRB |= (1<<Led2);   // declaracion de los pines como salida. led 2
+   DDRB &= ~(1<<SW1);   // declaracion de los pines como entrada. pulsador
+   //*****************//
+   
+   DDRC = 0b100000;
+   DDRD = 0b01111100;
+   //****************//
+   timer0_init();
+   motors(0,0);
+    while (1) {
+		if (push1) {
+			// codigo de prueba de motores, si se pulsa el pulsador 1 los motores giran, de lo contrario los motores se detienen
+			// valores positivos hacen girar los motores hacia adelante, el valor de 0 hace que el motor se detenga
+			// el valor maximo es 255, el valor minimo es -255.
+			Led1On;	// Enciende el led	
+			motors(120,120);  // El primer valor mueve el motor izquierdo, el segundo valor el motor derecho
+			_delay_ms(500);   // Espera 500 ms
+			motors(0,0);      // Detiene los motores
+			_delay_ms(200);
+			motors(-155,-155);  // el primer valor mueve el motor izquierdo, el segundo valor el motor derecho, valores negativos hacen girar hacia atras
+			_delay_ms(500);
+			motors(0,0);
+		}				   
+		else {	   
+			Led1Off;
+			motors(0,0);    // Detiene los motores
+		}
+    }
+}
