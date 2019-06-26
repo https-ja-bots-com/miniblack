@@ -1,0 +1,98 @@
+/*
+ * MiniBlack.c
+ *
+ * Created: 26/06/2019 12:10:33 p. m.
+ * Author : Jason
+ */ 
+
+/* Codigo de prueba del módulo de inicio, probado con motores y un led de la tarjeta
+Materiales
+- Tarjeta Miniblack:		1
+- Programador AVR:			1
+- Bateria:					    1
+- Modulo de inicio:			1
+- Motores (opcional):		1 ó 2
+*/
+
+#include <avr/io.h>
+#define F_CPU 20000000UL //Declara el reloj de 20MHz
+#include <util/delay.h>  //Libreria de Delay
+#include <stdlib.h>
+
+
+//********Declaracion de Pines*****************
+#define Led1	PB5		// Pin del Led1
+#define MSTA	PB1  // Pin del modulo para el boton start
+//*********************************************
+
+//********Declaracion de instrucciones de leds*********
+#define Led1On		PORTB |= (1<<Led1)  //Instrucción para prender el Led 1
+#define Led1Off		PORTB &= ~(1<<Led1) //Instrucción para apagar el Led 1
+//*****************************************************
+
+//********Declaracion Pines de motores*********
+# define IN1A PC5  // Declaracion de los pines que se conectan al driver
+# define IN2A PD4  //              ""
+# define IN1B PD3  //              ""
+# define IN2B PD2  //              ""
+# define PWM1 PD5  // Pin del PWM del motor 1
+# define PWM2 PD6  // Pin del PWM del motor 2
+//*****************************************************
+
+
+//********Declaracion de instrucciones del modulo*********
+#define ModuloOn	PINB & (1<<MSTA)
+//*********************************************
+
+//********Declaracion de variables globales*********
+int start =0;
+//*********************************************
+
+void timer0_init(void){  // Funcion que inicializa el timer 0 para el PWM de los motores
+	TCCR0A = 0b10100011; // Configuracion de Registros
+	TCCR0B = 0b00000010; // Configuracion de Registros
+	TCNT0 = 0;           // Inicializa el contador
+	OCR0A = 0;
+	OCR0B = 0;
+}
+
+int motors (int speedL, int speedR){ // Funcion para el uso de motores
+	int veld = speedR;
+	int veli = speedL;
+	
+	if (veld>0) { PORTC |= (1<<IN1A);	PORTD &= ~(1<<IN2A); }
+	else        {	PORTC &= ~(1<<IN1A);  PORTD |= (1<<IN2A); }
+	
+	if (veli>0) { PORTD |= (1<<IN1B);   PORTD &= ~(1<<IN2B); }
+	else        {	PORTD &= ~(1<<IN1B);	PORTD |= (1<<IN2B); }
+	OCR0B = abs(veld);
+	OCR0A = abs(veli);
+	return 0;
+}
+
+int main(void)
+{
+  DDRB |= (1<<Led1);  // declaracion del pin como salida (LED1)
+	DDRB &= ~(1<<MSTA);	// declaracion del pin como entrada (Sensor1)
+	DDRC = 0b100000;
+	DDRD = 0b01111100;
+	
+	  timer0_init();
+	   motors(0,0);
+   
+    while (1) 
+    {
+			if (ModuloOn) {start=1;} // Si el pin del módulo está en alto la variable start=1
+			else {start=0;Led1Off; motors(0,0);} // Si no, la variable start=0 el led1 apagado, motores apagados
+			
+			while(start==1) // Mientras la variables start==1 se 
+			{
+				Led1On; // Led encendido
+				motors(50,-50); // Motores activados
+				
+				
+				if (ModuloOn) {start=1;} //Dentro del while se pregunta por el estado del pin del modulo de inicio
+				else {start=0;Led1Off; motors(0,0);}// la variable stat=0, apaga el led, apaga motores. De esta manera se sale del while y apaga motores
+			}
+	}
+}
