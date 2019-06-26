@@ -1,0 +1,45 @@
+/*
+ * Miniblack-Prueba_leds.c
+ *
+ * Created: 17/04/2019 12:26:53 p. m.
+ * Author : JA-BOTS.COM
+ */ 
+ // Codigo de prueba de la tarjeta Miniblack 3.0 para el uso de los leds
+
+#include <avr/io.h>
+#define F_CPU 20000000UL //Define reloj de 20MHz
+#include <util/delay.h>
+
+#define Led1	PB5   // Declaracion de los pines de los leds
+#define Led2	PB4
+#define Led3	PB3
+
+#define Led1On		PORTB |= (1<<Led1) // Instruccion para prender el Led 1
+#define Led2On		PORTB |= (1<<Led2)
+#define Led3On		PORTB |= (1<<Led3)
+
+#define Led1Off		PORTB &= ~(1<<Led1) // instruccion para apagar el Led 1
+#define Led2Off		PORTB &= ~(1<<Led2)
+#define Led3Off		PORTB &= ~(1<<Led3)
+
+int main(void){
+    DDRB |= (1<<Led1); // declaracion de los pines para leds como salida.
+    DDRB |= (1<<Led2);
+    DDRB |= (1<<Led3);
+	
+    while (1) {
+		//secuencia de encendido de leds 
+		Led1On;
+		Led2Off;
+		Led3Off;
+		_delay_ms(1000);
+		Led1Off;
+		Led2On;
+		Led3Off;
+		_delay_ms(1000);
+		Led1Off;
+		Led2Off;
+		Led3On;
+		_delay_ms(1000);
+    }
+}
