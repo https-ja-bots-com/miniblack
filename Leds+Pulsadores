@@ -8,14 +8,13 @@
  // Archivo de prueba de leds y pulsadores de la tarjeta Miniblack 3.0
 
 #include <avr/io.h>
-#define F_CPU 20000000UL //Declara un reloj de 20MHz
-#include <util/delay.h>
-#include <stdlib.h>
+#define F_CPU 20000000UL //Declara el reloj de 20MHz
+#include <util/delay.h>  //Libreria de Delay
 
-#define SW1		PB0 // Pin del pulsador 1
+#define SW1	PB0 // Pin del pulsador 1
 #define Led1	PB5   // Pin del led a utilizar
 
-#define push1     PINB & (1<<SW1)     // instruccion para leer el pin de entrada
+#define push1     	PINB & (1<<SW1)     // instruccion para leer el pin del pulsador 1
 #define Led1On		PORTB |= (1<<Led1)  // Instruccion para poner en alto el Led 1
 #define Led1Off		PORTB &= ~(1<<Led1) // Instruccion para poner en bajo el Led 1
 
@@ -30,10 +29,10 @@ int main(void){
 		  //Codigo que enciende el led1 cuando se oprime el pulsador1 y se apaga cuando se suelta
 		  if (push1) {
 			  Led1On;
-			}
+		  }
 		  else {
 			  Led1Off;  
-      }
+      		  }
     }
 }
 
