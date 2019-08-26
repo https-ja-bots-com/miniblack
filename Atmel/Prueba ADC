@@ -1,0 +1,95 @@
+/*
+ * Miniblack Prueba del ADC con leds 
+ * Prueba ADC.c
+ *
+ * Created: 26/08/2019 12:09:02 p. m.
+ * Author : Ja-Bots.com
+ */ 
+
+/* Codigo de prueba para los sensores analogos en la tarjeta miniblack
+Este programa lee los dos canales destinados para los sensores QTR y prende el led 1 o 2 dependiendo si el sensor detecta que 
+la superficie es negra o blanca
+
+	Materiales
+	- Tarjeta Miniblack:	1
+	- Programador AVR:		1
+	- Bateria:				1
+	- Sensor Qtr1A:			1 (minimo 1 pero se sugieren 2)
+	
+	Cada sensor QTR1A debe conectarse en los pines llamados Qt2 (izqquierdo) Qt1 (derecho) manteniendo la polaridad adecuada
+	
+	Miniblack   ->  Sensor
+	+ (5v)		->  VCC
+	- (GND)		->  GND
+	QT1			->  Out
+	
+*/
+
+#include <avr/io.h>
+#define F_CPU 20000000UL
+#include <util/delay.h>
+#include <stdlib.h>
+
+#define Led1	PB5
+#define Led2	PB4
+#define Led3	PB3
+
+#define Led1On		PORTB |= (1<<Led1)
+#define Led2On		PORTB |= (1<<Led2)
+#define Led3On		PORTB |= (1<<Led3)
+
+#define Led1Off		PORTB &= ~(1<<Led1)
+#define Led2Off		PORTB &= ~(1<<Led2)
+#define Led3Off		PORTB &= ~(1<<Led3)
+
+int q1=0;
+int q2=0;
+uint16_t adci;
+uint16_t adcd;
+
+
+void adc_init()
+{
+	ADMUX = (1<<REFS0);
+	ADCSRA = (1<<ADEN)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0);
+}
+
+uint16_t adc_read(uint8_t ch)
+{
+	ch &= 0b00000111;  
+	ADMUX = (ADMUX & 0xF8)|ch;    
+	ADCSRA |= (1<<ADSC); 
+	while(ADCSRA & (1<<ADSC));
+	return (ADC);
+}
+
+void qtrs (void){
+	adcd = adc_read(6); // lee el adc6
+	_delay_us(10);
+	adci = adc_read(7); // lee el adc7
+	_delay_us(10);
+	
+	if(adcd>=180){q1=0; Led1Off;} else {q1=1;Led1On;} // compara los valores del ADC y prende o apaga el led segun sea el caso
+	if(adci>=180){ q2=0; Led2Off;} else {q2=1;Led2On;}
+		
+	// El valor de 180  solo es un valor de prueba que se puede cambiar para mejorar la respuesta de los sensores segun sea el caso
+}
+
+int main(void)
+{
+    //*******************//
+    DDRB |= (1<<Led1);
+    DDRB |= (1<<Led2);
+    DDRB |= (1<<Led3);
+    //******************//
+    DDRD = 0b01111100;
+    //****************//
+	Led3On;
+	adc_init();
+	_delay_ms(300);
+	Led3Off;
+    while (1) 
+    {
+		qtrs(); //Funcion que lee los sensores qtrs analogos
+    }
+}
