@@ -21,7 +21,7 @@ la superficie es negra o blanca
 	Miniblack   ->  Sensor
 	+ (5v)		->  VCC
 	- (GND)		->  GND
-	QT1			->  Out
+	QT1		->  Out
 	
 */
 
