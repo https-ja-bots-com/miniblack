@@ -1,22 +1,19 @@
-//Declaracion de Pines
+//Codigo para probar sensores de piso
+// adcd =>  Sensor Derecho
+// adcd =>  Sensor Izquierdo
+
+//Declaracion de Pines de Leds
 const int led1 = 13; 
 const int led2 = 12; 
 const int led3 = 11;
-const int s1 = 14; // conexion sensor 1
-const int s2 = 15; // conexion sensor 2
-const int s3 = 16; // conexion sensor 3
-const int s4 = 17; // conexion sensor 4 
-const int s5 = 18; // conexion sensor 5 
 
 //Declaracion de variables a utilizar
 int adcd=0;
 int adci=0;
-int sensor1=0;
-int sensor2=0;
-int q1=0;
-int q2=0;
+int QT1=0;
+int QT2=0;
 
-// Define los estados HIGH,LOW de cada led 
+//Define los estados HIGH,LOW de cada led 
 #define led1on digitalWrite(led1, HIGH);
 #define led2on digitalWrite(led2, HIGH);
 #define led3on digitalWrite(led3, HIGH);
@@ -29,45 +26,37 @@ void setup() {
     pinMode(led1,OUTPUT);
     pinMode(led2,OUTPUT);
     pinMode(led3,OUTPUT);
-    pinMode(s1,INPUT);
-    pinMode(s2,INPUT);
-    pinMode(s3,INPUT);
-    pinMode(s4,INPUT_PULLUP);
-    pinMode(s5,INPUT_PULLUP);
 }
 
 void loop() {
-    //Codigo para probar sensores de deteccion
-       adci = analogRead(6);
-       adcd = analogRead(7);
-       if (adci<=80){ 
-          led3on; 
-       }
-       else{
-          led3off; q1=0;
-       } 
-       if (adcd<=80){
-          led3on; q2=1;
+       
+       adcd = analogRead(6); // Lee sensor Derecho
+       delay(5);
+       adci = analogRead(7); // Lee sensor Izquierdo
+       delay(5);
+       
+       if (adcd<=80){  // EL valor de 80 puede cambiar segun te convenga
+          led1on; 
+          QT1=1;
        }
        else{ 
-          led3off; q2=0;
+          led1off; 
+          QT1=0;
        }
-       if (q1||q2){
+       
+       if (adci<=80){ // EL valor de 80 puede cambiar segun te convenga
+          led2on; 
+          QT2=1;
+       }
+       else{
+          led2off; 
+          QT2=0;
+       } 
+       
+       if (QT2||QT1){ // Si alguno de los dos sensores esta en 1 entonces prende el led3
           led3on;
        }
-  
-       sensor1 = !digitalRead(s4);
-       sensor2 = !digitalRead(s5);
-       if (sensor1==1){
-           led1on;
-       }
        else{
-           led1off;
-       }  
-       if (sensor2==1){
-           led2on;
-       }
-       else{
-           led2off;
+          led3off;
        }
 }
